@@ -41,5 +41,8 @@ vignettes/*.pdf
 #pdf data 
 *.pdf
 
+#ignore raw
+raw/Raw.csv
+
 
 
