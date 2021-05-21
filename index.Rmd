@@ -1,1 +1,104 @@
+#open library packages 
 
+library(here)
+
+library(tidyverse)
+
+library(forcats)
+
+library(fBasics)
+
+#load dataset 
+
+data <- read_csv(here("raw", "Raw.csv"))
+
+#show current column names 
+colnames(data)
+
+#remove the consent form columns Q2_1:Q2_8, quit question and empathy quotient
+df = select(data, 
+            -c(Q2_1:Q2_8, Q6, Q8, Q10, Q12, Q14, Q16, Q18, Q11_1:Q11_60)
+                          )
+colnames(df)
+
+#remove surplus columns 
+
+#recode gender 
+
+#recode column names 
+df <- df %>% rename("sex" = Q3,
+                    "age" = Q4,
+                    "ders" = Q5_1:Q5_36,
+                    "cesd" = Q9_1:Q9_20,
+                    "asrs" = Q17_1:Q17_18)
+
+df <- df %>%  rename("fullattention" = Q19,
+                                           "submit" = Q22)
+
+#remove obsolete row 1 
+df <- df[-c(1), ]
+
+# Add a ID column 
+df$id <- 1:nrow(df)
+
+#making the id column first 
+df <- df %>%  select(id, everything())
+
+
+#recoding varaibles 
+df[,2] <- ifelse(df[,2] == "Male", 1, ifelse(df[,2] == "Female", 2, 3))
+
+#ders 
+df[,4:39] <- ifelse(df[,4:39] == "Almost Never", 1, 
+                    ifelse(df[,4:39] == "Sometimes", 2, 
+                           ifelse(df[,4:39] == "Half the time", 3, 
+                                  ifelse(df[,4:39] == "Most of the time", 4, 
+                                         ifelse(df[,4:39] == "Almost Always", 5, 99)))))
+
+#ces-d
+df[,40:59] <- ifelse(df[,40:59] == "Rarely (less then a day)", 1, 
+                    ifelse(df[,40:59] == "Sometimes (1-2 days)", 2, 
+                           ifelse(df[,40:59] == "Occasionally (3-4 days)", 3, 
+                                  ifelse(df[,40:59] == "Most of the time (5-7 days)", 4, 99))))
+
+#ASRS
+df[,60:77] <- ifelse(df[,60:77] == "Never", 1, 
+                    ifelse(df[,60:77] == "Rarely", 2, 
+                           ifelse(df[,60:77] == "Something", 3, 
+                                  ifelse(df[,60:77] == "Often", 4, 
+                                         ifelse(df[,60:77] == "Very Often", 5, 99)))))
+
+
+#reverse code values for CES-D 
+df[,c("cesd4", "cesd8", "cesd12", "cesd16")] <- 5-df[,
+                                                     c("cesd4", "cesd8", "cesd12", "cesd16")]
+
+#reverse code values for DERS
+df[,c("ders1", "ders2", "ders6", "ders7", "ders8", "ders10", "ders17", "ders20", "ders22", "ders24", "ders34")] <- 6-df[,
+                                c("ders1", "ders2", "ders6", "ders7", "ders8", "ders10", "ders17", "ders20", "ders22", "ders24", "ders34")]
+
+
+#merging scales into single scale figure 
+
+df$ders <-  apply(df[, c(4:39)], 1, sum)
+
+df$cesd <-  apply(df[, c(40:59)], 1, sum)
+
+df$asrs <-  apply(df[, c(60:77)], 1, sum)
+
+#create a new dataframe with select variables 
+
+df = select(df, 
+            c(id, sex, age, ders, cesd, asrs))
+
+#checking df is as it should be 
+head(df)
+
+#id, age and sex displayed errors when attempting to summarise so mutated data frame to numeric 
+df <- mutate_all(df, as.numeric)
+
+#check the class of data frame 
+sapply(df, class)
+
+#summarise the data 
+basicStats(df)[c("Mean", "Stdev", "Median", "Minimum", "Maximum"),]
