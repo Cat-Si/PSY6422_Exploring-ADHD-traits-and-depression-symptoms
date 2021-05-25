@@ -40,7 +40,7 @@ library(forcats)
 library(fBasics)
 library(reshape2)
 library(shiny)
-library(plotly)
+
 
 #load dataset 
 data <- read.csv(here("raw", "Raw.csv"))

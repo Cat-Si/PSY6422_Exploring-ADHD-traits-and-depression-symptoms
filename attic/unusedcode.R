@@ -223,3 +223,53 @@ hstrategiesplot +  geom_point(mapping = aes(colour = strategies, size = strategi
 
 hclarityplot <- ggplot(df, aes(hasrs, cesd,)) 
 hclarityplot +  geom_point(mapping = aes(colour = clarity, size = clarity)) + geom_smooth(method = "lm", se = F) 
+
+
+#Attempt at running runtime: shiny for embedding shiny
+#Column {.sidebar}
+#--------------------------------------------------
+
+df <- read.csv("shiny/dataframe.csv")
+
+fluidPage( 
+  
+  
+  titlePanel("ADHD traits, Depression Symptoms and Emotion Regulation Domains"),
+  
+  sidebarPanel(
+    
+    selectInput('x', 'Reported Depression Symptoms', list("Depression Score" = "cesd")),
+    selectInput('y', 'ADHD trait type', list(Innatentive = "iasrs", Hyperactive = "hasrs")),
+    selectInput('ders', 'Emotion Regulation Difficulties per Domain', c(list("Non-Acceptance" = "nonaccept", Goals = "goals", Impulse = "impulse", Awareness = "awareness", Strategies = "strategies", Clarity = "clarity"))),
+    #selectInput('size', 'Size', c(list("Non-Acceptance" = "nonaccept", Goals = "goals", Impulse = "impulse", Awareness = "awareness", Strategies = "strategies", Clarity = "clarity"))) #this line was unnecessary 
+    
+  ),
+  
+  mainPanel(
+    plotOutput('plot')
+  )
+)
+
+
+
+#Column
+#--------------------------------------------------
+
+
+function(input, output) {
+  output$plot <- renderPlot({
+    
+    p <- ggplot(df, aes_string(x=input$x, y=input$y)) + geom_point()
+    
+    (input$color)
+    p <- p + aes_string(color=input$ders)
+    
+    (input$size)
+    p <- p + aes_string(size=input$ders) + guides(size = guide_legend(reverse = TRUE))
+    
+    
+    print(p)
+    
+  }, height=700) }
+
+

@@ -3,7 +3,6 @@ title: "ADHDtraits"
 author: "Catherine Sheen"
 date: "25/05/2021"
 output: html_document
-runtime: shiny
 ---
 
 ## Introduction
@@ -29,7 +28,7 @@ The Git Repo can be found [here](https://github.com/Cat-Si/PSY6422)
 ## Data wrangling   
   *** 
 
-Before any visualisations could be conducted on the data, a large amount of data wangling was required to get it to a usable form. 
+Before any visualisations could be conducted on the data, a large amount of data warngling was required to get it to a useable form. 
 
 ```{r results = 'hide', message=FALSE, warning=FALSE}
 #open library packages 
@@ -206,12 +205,11 @@ knitr::include_app("https://catsheen.shinyapps.io/PSY6422/?_ga=2.123750926.58067
 library(shiny)
 library(ggplot2)
 
-
 ```
 Column {.sidebar}
 --------------------------------------------------
 ```{r}
-
+df <- read.csv("shiny/dataframe.csv")
 
  fluidPage( 
     
