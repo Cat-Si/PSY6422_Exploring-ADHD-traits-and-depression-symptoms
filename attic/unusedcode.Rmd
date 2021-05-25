@@ -1,0 +1,117 @@
+---
+title: "unusedcode"
+author: "Catherine Sheen"
+date: "25/05/2021"
+output: html_document
+---
+
+```{r}
+
+#melt the data into long form 
+long <- melt(df, measure.vars = c("iasrs", "hasrs"))
+
+#predetermining the graph presets 
+#Innatentive ADHD traits
+themeadj = theme_light(base_size = 20) + theme(legend.background = element_rect(fill = "transparent", colour =))
+
+headingadj = theme(plot.caption = element_text(hjust = 0)) +
+  theme(plot.title = element_text(hjust = 0.5))
+
+
+adhdscale = scale_x_continuous(name="ADHD trait score" 
+) 
+
+
+
+cesdscale =  scale_y_continuous(name="Depression symptom score"
+)
+
+ders_gradient = scale_colour_gradient(low = "midnightblue", 
+                                      high = "cyan1")
+
+
+
+
+
+legend =  guides(size = guide_legend(reverse = TRUE, order = 2),
+                 color = guide_colourbar(order = 1),
+                 shape = guide_legend(order = 3),
+                 linetype = guide_legend(order = 4))
+
+
+shapelabels = scale_shape_discrete(labels = c("Innatentive", "Hyperactive"))
+linelabels = scale_linetype_discrete(labels = c("Innatentive", "Hyperactive"))   
+
+#non-acceptance  
+nonacceptplot <- ggplot(long, aes(value, cesd, shape = variable)) + 
+  ders_gradient + cesdscale  +  adhdscale + 
+  geom_smooth(method = "lm", se = F, color = "midnightblue", aes(linetype = variable)) +
+  geom_point(aes(size = nonaccept, color = nonaccept)) + 
+  themeadj + headingadj  + legend + shapelabels + linelabels +
+  ggtitle("Depression scores per ADHD traits and non-acceptance regulation difficulties") + 
+  labs(color = "Non-acceptance score", shape = "ADHD type", linetype = "ADHD  type", size = "Non-acceptance score") +
+  guides(shape = guide_legend(override.aes = list(size = 5)), linetype = guide_legend(override.aes = list(size = 1))) 
+
+#goals
+goalsplot <- ggplot(long, aes(value, cesd, shape = variable)) + 
+  ders_gradient + cesdscale  +  adhdscale + 
+  geom_smooth(method = "lm", se = F, color = "midnightblue", aes(linetype = variable)) +
+  geom_point(aes(size = goals, color = goals)) + 
+  themeadj + headingadj  + legend + shapelabels + linelabels +
+  ggtitle("Depression scores per ADHD traits and Goals regulation difficulties") + 
+  labs(color = "Goals score", shape = "ADHD type", linetype = "ADHD  type", size = "Goals score") +
+  guides(shape = guide_legend(override.aes = list(size = 5)), linetype = guide_legend(override.aes = list(size = 1))) 
+
+goalsplot
+
+#impulse 
+impulseplot <- ggplot(long, aes(value, cesd, shape = variable)) + 
+  ders_gradient + cesdscale  +  adhdscale + 
+  geom_smooth(method = "lm", se = F, color = "midnightblue", aes(linetype = variable)) +
+  geom_point(aes(size = impulse, color = impulse)) + 
+  themeadj + headingadj  + legend + shapelabels + linelabels +
+  ggtitle("Depression scores per ADHD traits and Impulse regulation difficulties") + 
+  labs(color = "Impulse score", shape = "ADHD type", linetype = "ADHD  type", size = "Impulse score") +
+  guides(shape = guide_legend(override.aes = list(size = 5)), linetype = guide_legend(override.aes = list(size = 1)))
+
+impulseplot
+
+#awareness 
+
+awarenessplot <- ggplot(long, aes(value, cesd, shape = variable)) + 
+  ders_gradient + cesdscale  +  adhdscale + 
+  geom_smooth(method = "lm", se = F, color = "midnightblue", aes(linetype = variable)) +
+  geom_point(aes(size = awareness, color = awareness)) + 
+  themeadj + headingadj  + legend + shapelabels + linelabels +
+  ggtitle("Depression scores per ADHD traits and Awareness regulation difficulties") + 
+  labs(color = "Awareness score", shape = "ADHD type", linetype = "ADHD  type", size = "Awareness score") +
+  guides(shape = guide_legend(override.aes = list(size = 5)), linetype = guide_legend(override.aes = list(size = 1)))
+
+awarenessplot
+
+#strategies 
+strategiesplot <- ggplot(long, aes(value, cesd, shape = variable)) + 
+  ders_gradient + cesdscale  +  adhdscale + 
+  geom_smooth(method = "lm", se = F, color = "midnightblue", aes(linetype = variable)) +
+  geom_point(aes(size = strategies, color = strategies)) + 
+  themeadj + headingadj  + legend + shapelabels + linelabels +
+  ggtitle("Depression scores per ADHD traits and Strategies regulation difficulties") + 
+  labs(color = "Strategies score", shape = "ADHD type", linetype = "ADHD  type", size = "Strategies score") +
+  guides(shape = guide_legend(override.aes = list(size = 5)), linetype = guide_legend(override.aes = list(size = 1)))
+
+strategiesplot   
+
+#clarity
+clarityplot <- ggplot(long, aes(value, cesd, shape = variable)) + 
+  ders_gradient + cesdscale  +  adhdscale + 
+  geom_smooth(method = "lm", se = F, color = "midnightblue", aes(linetype = variable)) +
+  geom_point(aes(size = clarity, color = clarity)) + 
+  themeadj + headingadj  + legend + shapelabels + linelabels +
+  ggtitle("Depression scores per ADHD traits and Clarity regulation difficulties") + 
+  labs(color = "Clarity score", shape = "ADHD type", linetype = "ADHD  type", size = "Clarity score") +
+  guides(shape = guide_legend(override.aes = list(size = 5)), linetype = guide_legend(override.aes = list(size = 1)))
+
+clarityplot
+```
+
+
