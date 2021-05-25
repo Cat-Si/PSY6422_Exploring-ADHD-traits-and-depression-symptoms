@@ -8,7 +8,7 @@ runtime: shiny
 
 ## Introduction
   ***
-### Background
+
 
 ![](figs/adhdbrain.jpg)
 
@@ -23,6 +23,8 @@ _**Does the relationship between ADHD traits and depression symptoms exist throu
 The data used in this project was collected as part of a BSc (hons) Forensic Psychology level 6 project at Staffordshire University titled *"Is there a relationship between emotion regulation, empathy and depression in healthy individuals reporting ADHD traits?"* by Catherine Sheen*. It builds on the previous findings that statistically emotion regulation mediated the relationship between depression symptoms and ADHD traits and endevours to visually represent these findings. The analysis includes results from the [Adult ADHD self-report Scale (ASRS)](https://doi.org/10.1080/10401230600801077), the [Difficulties in Emotion Regulation Scale (DERS)](https://doi.org/10.1023/B:JOBA.0000007455.08539.94), and the [Center for Epidemiological Studies Depression Scale (CES-D)](https://doi.org/10.1177%2F014662167700100306).
 
 *Many thanks to Dr Justine Drakeford for being a fantastic project supervisor and mentor during my undergraduate studies. 
+
+The Git Repo can be found [here](https://github.com/Cat-Si/PSY6422)
 
 ## Data wrangling   
   *** 
