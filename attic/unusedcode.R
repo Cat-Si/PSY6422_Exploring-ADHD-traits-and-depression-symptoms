@@ -1,11 +1,3 @@
----
-title: "unusedcode"
-author: "Catherine Sheen"
-date: "25/05/2021"
-output: html_document
----
-
-```{r}
 library(here)
 
 library(tidyverse)
@@ -19,11 +11,6 @@ library(reshape2)
 library(rsconnect)
 
 library(shiny)
-```
-
-
-
-```{r}
 
 #melt the data into long form 
 long <- melt(df, measure.vars = c("iasrs", "hasrs"))
@@ -130,11 +117,6 @@ clarityplot <- ggplot(long, aes(value, cesd, shape = variable)) +
   guides(shape = guide_legend(override.aes = list(size = 5)), linetype = guide_legend(override.aes = list(size = 1)))
 
 clarityplot
-```
-
-cont. 
-```{r}
-
 
 #basic visualisations of the data 
 p <- ggplot(df, aes(asrs, cesd)) 
@@ -144,103 +126,100 @@ p <- ggplot(df, aes(asrs, ders))
 p  +   geom_point(color = "green", size = 10) + geom_smooth(method = "lm", se = F) 
 
 p <- ggplot(df, aes(cesd, ders))  
-  p  +   geom_point(size = 7) + geom_smooth(method = "lm", se = F) 
-  
-#visualisations with innatentive and hyperactive type 
-  
-  hcesd <- ggplot(df, aes(hasrs, cesd)) 
-  hcesd +  geom_point(size = 6, alpha = .5) + geom_smooth(se = F) 
-  
-  icesd <- ggplot(df, aes(iasrs, cesd)) 
-  icesd +  geom_point(size = 6, alpha = .5) + geom_smooth(se = F) 
+p  +   geom_point(size = 7) + geom_smooth(method = "lm", se = F) 
 
-  iders <- ggplot(df, aes(iasrs, ders)) 
-  iders +  geom_point(size = 6, alpha = .5) + geom_smooth(method = "lm", se = F) 
-  
-  hders <- ggplot(df, aes(hasrs, ders)) 
-  hders +  geom_point(size = 6, alpha = .5) + geom_smooth(method = "lm", se = F) 
-  
+#visualisations with innatentive and hyperactive type 
+
+hcesd <- ggplot(df, aes(hasrs, cesd)) 
+hcesd +  geom_point(size = 6, alpha = .5) + geom_smooth(se = F) 
+
+icesd <- ggplot(df, aes(iasrs, cesd)) 
+icesd +  geom_point(size = 6, alpha = .5) + geom_smooth(se = F) 
+
+iders <- ggplot(df, aes(iasrs, ders)) 
+iders +  geom_point(size = 6, alpha = .5) + geom_smooth(method = "lm", se = F) 
+
+hders <- ggplot(df, aes(hasrs, ders)) 
+hders +  geom_point(size = 6, alpha = .5) + geom_smooth(method = "lm", se = F) 
+
 #swapping x and y axis 
-  p <- ggplot(df, aes(cesd, asrs)) 
-  p +  geom_point(size = 10, alpha = 0.9) + geom_smooth(method = "lm", se = F) 
+p <- ggplot(df, aes(cesd, asrs)) 
+p +  geom_point(size = 10, alpha = 0.9) + geom_smooth(method = "lm", se = F) 
 
 #graph with asrsXcesd with ders represented as colour 
-  p <- ggplot(df, aes(asrs, cesd, colour = ders, fill = ders)) 
-  p +  geom_point(size = 10, alpha = 0.9) + geom_smooth(method = "lm", se = F)
-  
-  p <- ggplot(df, aes(asrs, cesd,)) 
-  p +  geom_point(mapping = aes(colour = ders, size = ders)) + geom_smooth(method = "lm", se = F)
+p <- ggplot(df, aes(asrs, cesd, colour = ders, fill = ders)) 
+p +  geom_point(size = 10, alpha = 0.9) + geom_smooth(method = "lm", se = F)
+
+p <- ggplot(df, aes(asrs, cesd,)) 
+p +  geom_point(mapping = aes(colour = ders, size = ders)) + geom_smooth(method = "lm", se = F)
 
 #graph looks better with a xlog10 however this results in a uneven scale and potentially biases the impression perceived  
 #changing how much axis increases by 
-  ders =  scale_colour_gradient(low = "cyan", high = "magenta")
-  
-  p <- ggplot(df, aes(asrs, cesd,)) 
-  p +  geom_point(mapping = aes(size = ders, color = ders)) +
-       geom_smooth(method = "lm", se = F) +
-        scale_x_continuous(name="ADHD trait score") + 
-          scale_y_continuous(name="Depression symptom score") + 
-            scale_color_gradient(low = "purple4", high = "magenta")
-           
-  
+ders =  scale_colour_gradient(low = "cyan", high = "magenta")
+
+p <- ggplot(df, aes(asrs, cesd,)) 
+p +  geom_point(mapping = aes(size = ders, color = ders)) +
+  geom_smooth(method = "lm", se = F) +
+  scale_x_continuous(name="ADHD trait score") + 
+  scale_y_continuous(name="Depression symptom score") + 
+  scale_color_gradient(low = "purple4", high = "magenta")
+
+
 #graph per ders construct 
-  nonacceptplot <- ggplot(df, aes(asrs, cesd,)) 
-  nonacceptplot +  geom_point(mapping = aes(colour = nonaccept, size = nonaccept)) + geom_smooth(method = "lm", se = F)
- 
-  goalsplot <- ggplot(df, aes(asrs, cesd,)) 
-  goalsplot +  geom_point(mapping = aes(colour = goals, size = goals)) + geom_smooth(method = "lm", se = F)  
+nonacceptplot <- ggplot(df, aes(asrs, cesd,)) 
+nonacceptplot +  geom_point(mapping = aes(colour = nonaccept, size = nonaccept)) + geom_smooth(method = "lm", se = F)
 
-  impulseplot <- ggplot(df, aes(asrs, cesd,)) 
-  impulseplot +  geom_point(mapping = aes(colour = impulse, size = impulse)) + geom_smooth(method = "lm", se = F)
-  
-  awarenessplot <- ggplot(df, aes(asrs, cesd,)) 
-  awarenessplot +  geom_point(mapping = aes(colour = awareness, size = awareness)) + geom_smooth(method = "lm", se = F)
+goalsplot <- ggplot(df, aes(asrs, cesd,)) 
+goalsplot +  geom_point(mapping = aes(colour = goals, size = goals)) + geom_smooth(method = "lm", se = F)  
 
-  strategiesplot <- ggplot(df, aes(asrs, cesd,)) 
-  strategiesplot +  geom_point(mapping = aes(colour = strategies, size = strategies)) + geom_smooth(method = "lm", se = F)  
-  
-  clarityplot <- ggplot(df, aes(asrs, cesd,)) 
-  clarityplot +  geom_point(mapping = aes(colour = clarity, size = clarity)) + geom_smooth(method = "lm", se = F) 
+impulseplot <- ggplot(df, aes(asrs, cesd,)) 
+impulseplot +  geom_point(mapping = aes(colour = impulse, size = impulse)) + geom_smooth(method = "lm", se = F)
+
+awarenessplot <- ggplot(df, aes(asrs, cesd,)) 
+awarenessplot +  geom_point(mapping = aes(colour = awareness, size = awareness)) + geom_smooth(method = "lm", se = F)
+
+strategiesplot <- ggplot(df, aes(asrs, cesd,)) 
+strategiesplot +  geom_point(mapping = aes(colour = strategies, size = strategies)) + geom_smooth(method = "lm", se = F)  
+
+clarityplot <- ggplot(df, aes(asrs, cesd,)) 
+clarityplot +  geom_point(mapping = aes(colour = clarity, size = clarity)) + geom_smooth(method = "lm", se = F) 
 
 #ders construct X adhd type 
-  
-  #inattentive
-  inonacceptplot <- ggplot(df, aes(iasrs, cesd,)) 
-  inonacceptplot +  geom_point(mapping = aes(colour = nonaccept, size = nonaccept)) + geom_smooth(method = "lm", se = F)
-  
-  igoalsplot <- ggplot(df, aes(iasrs, cesd,)) 
-  igoalsplot +  geom_point(mapping = aes(colour = goals, size = goals)) + geom_smooth(method = "lm", se = F)  
-  
-  iimpulseplot <- ggplot(df, aes(iasrs, cesd,)) 
-  iimpulseplot +  geom_point(mapping = aes(colour = impulse, size = impulse)) + geom_smooth(method = "lm", se = F)
-  
-  iawarenessplot <- ggplot(df, aes(iasrs, cesd,)) 
-  iawarenessplot +  geom_point(mapping = aes(colour = awareness, size = awareness)) + geom_smooth(method = "lm", se = F)
-  
-  istrategiesplot <- ggplot(df, aes(iasrs, cesd,)) 
-  istrategiesplot +  geom_point(mapping = aes(colour = strategies, size = strategies)) + geom_smooth(method = "lm", se = F)  
-  
-  iclarityplot <- ggplot(df, aes(iasrs, cesd,)) 
-  iclarityplot +  geom_point(mapping = aes(colour = clarity, size = clarity)) + geom_smooth(method = "lm", se = F) 
-  
-  #hyperactive 
-  hnonacceptplot <- ggplot(df, aes(hasrs, cesd,)) 
-  hnonacceptplot +  geom_point(mapping = aes(colour = nonaccept, size = nonaccept)) + geom_smooth(method = "lm", se = F)
-  
-  hgoalsplot <- ggplot(df, aes(hasrs, cesd,)) 
-  hgoalsplot +  geom_point(mapping = aes(colour = goals, size = goals)) + geom_smooth(method = "lm", se = F)  
-  
-  himpulseplot <- ggplot(df, aes(hasrs, cesd,)) 
-  himpulseplot +  geom_point(mapping = aes(colour = impulse, size = impulse)) + geom_smooth(method = "lm", se = F)
-  
-  hawarenessplot <- ggplot(df, aes(hasrs, cesd,)) 
-  hawarenessplot +  geom_point(mapping = aes(colour = awareness, size = awareness)) + geom_smooth(method = "lm", se = F)
-  
-  hstrategiesplot <- ggplot(df, aes(hasrs, cesd,)) 
-  hstrategiesplot +  geom_point(mapping = aes(colour = strategies, size = strategies)) + geom_smooth(method = "lm", se = F)  
-  
-  hclarityplot <- ggplot(df, aes(hasrs, cesd,)) 
-  hclarityplot +  geom_point(mapping = aes(colour = clarity, size = clarity)) + geom_smooth(method = "lm", se = F) 
 
-```
+#inattentive
+inonacceptplot <- ggplot(df, aes(iasrs, cesd,)) 
+inonacceptplot +  geom_point(mapping = aes(colour = nonaccept, size = nonaccept)) + geom_smooth(method = "lm", se = F)
 
+igoalsplot <- ggplot(df, aes(iasrs, cesd,)) 
+igoalsplot +  geom_point(mapping = aes(colour = goals, size = goals)) + geom_smooth(method = "lm", se = F)  
+
+iimpulseplot <- ggplot(df, aes(iasrs, cesd,)) 
+iimpulseplot +  geom_point(mapping = aes(colour = impulse, size = impulse)) + geom_smooth(method = "lm", se = F)
+
+iawarenessplot <- ggplot(df, aes(iasrs, cesd,)) 
+iawarenessplot +  geom_point(mapping = aes(colour = awareness, size = awareness)) + geom_smooth(method = "lm", se = F)
+
+istrategiesplot <- ggplot(df, aes(iasrs, cesd,)) 
+istrategiesplot +  geom_point(mapping = aes(colour = strategies, size = strategies)) + geom_smooth(method = "lm", se = F)  
+
+iclarityplot <- ggplot(df, aes(iasrs, cesd,)) 
+iclarityplot +  geom_point(mapping = aes(colour = clarity, size = clarity)) + geom_smooth(method = "lm", se = F) 
+
+#hyperactive 
+hnonacceptplot <- ggplot(df, aes(hasrs, cesd,)) 
+hnonacceptplot +  geom_point(mapping = aes(colour = nonaccept, size = nonaccept)) + geom_smooth(method = "lm", se = F)
+
+hgoalsplot <- ggplot(df, aes(hasrs, cesd,)) 
+hgoalsplot +  geom_point(mapping = aes(colour = goals, size = goals)) + geom_smooth(method = "lm", se = F)  
+
+himpulseplot <- ggplot(df, aes(hasrs, cesd,)) 
+himpulseplot +  geom_point(mapping = aes(colour = impulse, size = impulse)) + geom_smooth(method = "lm", se = F)
+
+hawarenessplot <- ggplot(df, aes(hasrs, cesd,)) 
+hawarenessplot +  geom_point(mapping = aes(colour = awareness, size = awareness)) + geom_smooth(method = "lm", se = F)
+
+hstrategiesplot <- ggplot(df, aes(hasrs, cesd,)) 
+hstrategiesplot +  geom_point(mapping = aes(colour = strategies, size = strategies)) + geom_smooth(method = "lm", se = F)  
+
+hclarityplot <- ggplot(df, aes(hasrs, cesd,)) 
+hclarityplot +  geom_point(mapping = aes(colour = clarity, size = clarity)) + geom_smooth(method = "lm", se = F) 
