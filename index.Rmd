@@ -248,4 +248,4 @@ server <- function(input, output) {
 # Run the application 
 shinyApp(ui = ui, server = server)
 ```
-
+The original research paper including a multiple regression with mediation analysis can be found [here](https://github.com/Cat-Si/adhd-and-depression-mediated-by-emotion-regulation/blob/main/Documents/Is%20there%20a%20relationship%20between%20emotion%20regulation%2C%20empathy%20and%20depression%20in%20healthy%20individuals%20reporting%20ADHD%20traits.pdf)
