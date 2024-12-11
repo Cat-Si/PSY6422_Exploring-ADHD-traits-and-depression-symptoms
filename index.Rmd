@@ -24,7 +24,7 @@ The data used in this project was collected as part of a BSc (hons) Forensic Psy
 
 The Git Repo can be found [here](https://github.com/Cat-Si/PSY6422)
 
-The original research paper including a multiple regression with mediation analysis can be found [here](https://github.com/Cat-Si/adhd-and-depression-mediated-by-emotion-regulation/blob/main/Documents/Is%20there%20a%20relationship%20between%20emotion%20regulation%2C%20empathy%20and%20depression%20in%20healthy%20individuals%20reporting%20ADHD%20traits.pdf).
+The original research paper including a multiple regression with mediation analysis can be found [here](https://github.com/Cat-Si/PSY6422_Exploring-ADHD-traits-and-depression-symptoms/blob/main/Is%20there%20a%20relationship%20between%20emotion%20regulation%2C%20empathy%20and%20depression%20in%20healthy%20individuals%20reporting%20ADHD%20traits.pdf).
 
 ## Data wrangling   
   *** 
@@ -32,7 +32,7 @@ The original research paper including a multiple regression with mediation analy
 Before any visualisations could be conducted on the data, a large amount of data wangling was required to get it to a usable form. 
 
 ```{r results = 'hide', message=FALSE, warning=FALSE}
-#open library packages 
+# open library packages
 
 library(here)
 library(tidyverse)
@@ -41,117 +41,138 @@ library(fBasics)
 library(reshape2)
 library(shiny)
 
-#load dataset 
+# load dataset
 data <- read.csv(here("raw", "Raw.csv"))
 
-#show current column names 
+# show current column names
 colnames(data)
 
-#remove the consent form columns Q2_1:Q2_8, quit question and empathy quotient
-df = select(data, 
-            -c(Q2_1:Q2_8, Q6, Q8, Q10, Q12, Q14, Q16, Q18, Q11_1:Q11_60)
-                          )
+# remove the consent form columns Q2_1:Q2_8, quit question and empathy quotient
+df <- select(
+    data,
+    -c(Q2_1:Q2_8, Q6, Q8, Q10, Q12, Q14, Q16, Q18, Q11_1:Q11_60)
+)
 colnames(df)
 
 
-#code column names 
-df <- df %>% rename("sex" = Q3,
-                    "age" = Q4,
-                    "ders" = Q5_1:Q5_36,
-                    "cesd" = Q9_1:Q9_20,
-                    "asrs" = Q17_1:Q17_18)
+# code column names
+df <- df %>% rename(
+    "sex" = Q3,
+    "age" = Q4,
+    "ders" = Q5_1:Q5_36,
+    "cesd" = Q9_1:Q9_20,
+    "asrs" = Q17_1:Q17_18
+)
 
-df <- df %>%  rename("fullattention" = Q19,
-                                           "submit" = Q22)
+df <- df %>% rename(
+    "fullattention" = Q19,
+    "submit" = Q22
+)
 
-#remove obsolete row 1 
+# remove obsolete row 1
 df <- df[-c(1), ]
 
-# Add a ID column 
+# Add a ID column
 df$id <- 1:nrow(df)
 
-#making id column first 
-df <- df %>%  select(id, everything())
+# making id column first
+df <- df %>% select(id, everything())
 
 
-#recoding varaibles 
-df[,2] <- ifelse(df[,2] == "Male", 1, ifelse(df[,2] == "Female", 2, 3))
+# recoding varaibles
+df[, 2] <- ifelse(df[, 2] == "Male", 1, ifelse(df[, 2] == "Female", 2, 3))
 
-#ders 
-df[,4:39] <- ifelse(df[,4:39] == "Almost Never", 1, 
-                    ifelse(df[,4:39] == "Sometimes", 2, 
-                           ifelse(df[,4:39] == "Half the time", 3, 
-                                  ifelse(df[,4:39] == "Most of the time", 4, 
-                                         ifelse(df[,4:39] == "Almost Always", 5, 99)))))
+# ders
+df[, 4:39] <- ifelse(df[, 4:39] == "Almost Never", 1,
+    ifelse(df[, 4:39] == "Sometimes", 2,
+        ifelse(df[, 4:39] == "Half the time", 3,
+            ifelse(df[, 4:39] == "Most of the time", 4,
+                ifelse(df[, 4:39] == "Almost Always", 5, 99)
+            )
+        )
+    )
+)
 
-#ces-d
-df[,40:59] <- ifelse(df[,40:59] == "Rarely (less then a day)", 1, 
-                    ifelse(df[,40:59] == "Sometimes (1-2 days)", 2, 
-                           ifelse(df[,40:59] == "Occasionally (3-4 days)", 3, 
-                                  ifelse(df[,40:59] == "Most of the time (5-7 days)", 4, 99))))
+# ces-d
+df[, 40:59] <- ifelse(df[, 40:59] == "Rarely (less then a day)", 1,
+    ifelse(df[, 40:59] == "Sometimes (1-2 days)", 2,
+        ifelse(df[, 40:59] == "Occasionally (3-4 days)", 3,
+            ifelse(df[, 40:59] == "Most of the time (5-7 days)", 4, 99)
+        )
+    )
+)
 
-#ASRS
-df[,60:77] <- ifelse(df[,60:77] == "Never", 1, 
-                    ifelse(df[,60:77] == "Rarely", 2, 
-                           ifelse(df[,60:77] == "Something", 3, 
-                                  ifelse(df[,60:77] == "Often", 4, 
-                                         ifelse(df[,60:77] == "Very Often", 5, 99)))))
-
-
-#reverse code values for CES-D 
-df[,c("cesd4", "cesd8", "cesd12", "cesd16")] <- 5-df[,
-                                                     c("cesd4", "cesd8", "cesd12", "cesd16")]
-
-#reverse code values for DERS
-df[,c("ders1", "ders2", "ders6", "ders7", "ders8", "ders10", "ders17", "ders20", "ders22", "ders24", "ders34")] <- 6-df[,
-                                c("ders1", "ders2", "ders6", "ders7", "ders8", "ders10", "ders17", "ders20", "ders22", "ders24", "ders34")]
+# ASRS
+df[, 60:77] <- ifelse(df[, 60:77] == "Never", 1,
+    ifelse(df[, 60:77] == "Rarely", 2,
+        ifelse(df[, 60:77] == "Something", 3,
+            ifelse(df[, 60:77] == "Often", 4,
+                ifelse(df[, 60:77] == "Very Often", 5, 99)
+            )
+        )
+    )
+)
 
 
-#merging scales into single scale figure 
+# reverse code values for CES-D
+df[, c("cesd4", "cesd8", "cesd12", "cesd16")] <- 5 - df[
+    ,
+    c("cesd4", "cesd8", "cesd12", "cesd16")
+]
 
-df$ders <-  apply(df[, c(4:39)], 1, sum)
+# reverse code values for DERS
+df[, c("ders1", "ders2", "ders6", "ders7", "ders8", "ders10", "ders17", "ders20", "ders22", "ders24", "ders34")] <- 6 - df[
+    ,
+    c("ders1", "ders2", "ders6", "ders7", "ders8", "ders10", "ders17", "ders20", "ders22", "ders24", "ders34")
+]
 
-df$cesd <-  apply(df[, c(40:59)], 1, sum)
 
-df$asrs <-  apply(df[, c(60:77)], 1, sum)
+# merging scales into single scale figure
 
-df$iasrs <-  apply(df[, c(60, 61, 62, 63, 66, 67, 68, 69, 70)], 1, sum)
+df$ders <- apply(df[, c(4:39)], 1, sum)
 
-df$hasrs <-  apply(df[, c(64, 65, 71, 72, 73, 74, 75, 76, 77)], 1, sum)
+df$cesd <- apply(df[, c(40:59)], 1, sum)
 
-df$nonaccept <-  apply(df[, c(14, 15, 24, 26, 28, 32)], 1, sum)
+df$asrs <- apply(df[, c(60:77)], 1, sum)
 
-df$goals <-  apply(df[, c(16, 21, 23, 29, 36)], 1, sum)
+df$iasrs <- apply(df[, c(60, 61, 62, 63, 66, 67, 68, 69, 70)], 1, sum)
 
-df$impulse <-  apply(df[, c(6, 17, 22, 27, 30, 35)], 1, sum)
+df$hasrs <- apply(df[, c(64, 65, 71, 72, 73, 74, 75, 76, 77)], 1, sum)
 
-df$awareness <-  apply(df[, c(5, 9, 11, 13, 20, 37)], 1, sum)
+df$nonaccept <- apply(df[, c(14, 15, 24, 26, 28, 32)], 1, sum)
 
-df$strategies <-  apply(df[, c(18, 19, 25, 31, 33, 34, 38, 39)], 1, sum)
+df$goals <- apply(df[, c(16, 21, 23, 29, 36)], 1, sum)
 
-df$clarity<-  apply(df[, c(4, 7, 8, 10, 12)], 1, sum)
+df$impulse <- apply(df[, c(6, 17, 22, 27, 30, 35)], 1, sum)
 
-#create a new dataframe with select variables 
+df$awareness <- apply(df[, c(5, 9, 11, 13, 20, 37)], 1, sum)
 
-df = select(df, 
-            c(id, sex, age, ders, cesd, asrs, iasrs, hasrs, nonaccept, goals, impulse, awareness, strategies, clarity))
+df$strategies <- apply(df[, c(18, 19, 25, 31, 33, 34, 38, 39)], 1, sum)
 
-#checking df is as it should be 
+df$clarity <- apply(df[, c(4, 7, 8, 10, 12)], 1, sum)
+
+# create a new dataframe with select variables
+
+df <- select(
+    df,
+    c(id, sex, age, ders, cesd, asrs, iasrs, hasrs, nonaccept, goals, impulse, awareness, strategies, clarity)
+)
+
+# checking df is as it should be
 head(df)
 
-#id, age and sex displayed errors when attempting to summarise so mutated data frame to numeric 
+# id, age and sex displayed errors when attempting to summarise so mutated data frame to numeric
 df <- mutate_all(df, as.numeric)
 
-#check the class of data frame 
+# check the class of data frame
 sapply(df, class)
-
 ```
 Checking the final cleaned data set prior to visualisation 
 
 
 ```{r}
 head(df)
-basicStats(df)[c("Mean", "Stdev", "Median", "Minimum", "Maximum"),]
+basicStats(df)[c("Mean", "Stdev", "Median", "Minimum", "Maximum"), ]
 ```
 
 
@@ -163,31 +184,30 @@ basicStats(df)[c("Mean", "Stdev", "Median", "Minimum", "Maximum"),]
 
 #### *Pre-defining appearance* 
 ```{r}
-themeadj = theme_light(base_size = 15) + #plot theme appearance
-            theme(legend.background = element_rect(fill = "transparent", colour =)) + #adj legend appearance
-              theme(plot.title = element_text(size = 14, face = "bold", hjust = )) + #plot title size/typeface
-                theme(plot.caption = element_text(hjust = 0, size = 8)) #plot caption location/size
-
+themeadj <- theme_light(base_size = 15) + # plot theme appearance
+    theme(legend.background = element_rect(fill = "transparent", colour = )) + # adj legend appearance
+    theme(plot.title = element_text(size = 14, face = "bold", hjust = )) + # plot title size/typeface
+    theme(plot.caption = element_text(hjust = 0, size = 8)) # plot caption location/size
 ```
 
 #### *Plotting the Graph* 
 ```{r}
-  
-p <- ggplot(df, aes(asrs, cesd,)) 
-  p <- p +  geom_point(mapping = aes(size = ders, color = ders)) +
-       geom_smooth(method = "lm", se = F, colour = "black") +
-        scale_x_continuous(name="ADHD trait score") + 
-          scale_y_continuous(name="Depression symptom score") + 
-            scale_color_gradient(low = "black", high = "magenta") +
-              guides(size = guide_legend(reverse = TRUE)) + 
-                themeadj
- p + ggtitle("Depression Symptoms in Relation to ADHD Traits and Emotion Regulation", ) +
-      labs(color = "DERS Score*",
-            size = "DERS Score*",
-              caption = expression(italic("*DERS = Difficulties in Emotion Regulation"))) 
-               
-ggsave("figs/hi_res.png", height=8, width = 10, units = "in")
+p <- ggplot(df, aes(asrs, cesd, ))
+p <- p + geom_point(mapping = aes(size = ders, color = ders)) +
+    geom_smooth(method = "lm", se = F, colour = "black") +
+    scale_x_continuous(name = "ADHD trait score") +
+    scale_y_continuous(name = "Depression symptom score") +
+    scale_color_gradient(low = "black", high = "magenta") +
+    guides(size = guide_legend(reverse = TRUE)) +
+    themeadj
+p + ggtitle("Depression Symptoms in Relation to ADHD Traits and Emotion Regulation", ) +
+    labs(
+        color = "DERS Score*",
+        size = "DERS Score*",
+        caption = expression(italic("*DERS = Difficulties in Emotion Regulation"))
+    )
 
+ggsave("figs/hi_res.png", height = 8, width = 10, units = "in")
 ```
 A decision was made to keep the graph simple and clear to not detract from the importance of the findings. 
 
@@ -210,43 +230,36 @@ library(ggplot2)
 df <- read.csv("dataframe.csv")
 
 ui <- fluidPage(
-    
     titlePanel("ADHD traits, Depression Symptoms and Emotion Regulation Domains"),
-    
     sidebarPanel(
-        
-      
-        selectInput('x', 'Reported Depression Symptoms', list("Depression Score" = "cesd")),
-        selectInput('y', 'ADHD trait type', list(Innatentive = "iasrs", Hyperactive = "hasrs")),
-        selectInput('ders', 'Emotion Regulation Difficulties per Domain', c(list("Non-Acceptance" = "nonaccept", Goals = "goals", Impulse = "impulse", Awareness = "awareness", Strategies = "strategies", Clarity = "clarity"))),
-        #selectInput('size', 'Size', c(list("Non-Acceptance" = "nonaccept", Goals = "goals", Impulse = "impulse", Awareness = "awareness", Strategies = "strategies", Clarity = "clarity")))
-    
+        selectInput("x", "Reported Depression Symptoms", list("Depression Score" = "cesd")),
+        selectInput("y", "ADHD trait type", list(Innatentive = "iasrs", Hyperactive = "hasrs")),
+        selectInput("ders", "Emotion Regulation Difficulties per Domain", c(list("Non-Acceptance" = "nonaccept", Goals = "goals", Impulse = "impulse", Awareness = "awareness", Strategies = "strategies", Clarity = "clarity"))),
+        # selectInput('size', 'Size', c(list("Non-Acceptance" = "nonaccept", Goals = "goals", Impulse = "impulse", Awareness = "awareness", Strategies = "strategies", Clarity = "clarity")))
     ),
-    
     mainPanel(
-        plotOutput('plot')
+        plotOutput("plot")
     )
 )
 
 server <- function(input, output) {
-    
-    
-    output$plot <- renderPlot({
-       
-        p <- ggplot(df, aes_string(x=input$x, y=input$y)) + geom_point()
-        
-        (input$color)
-            p <- p + aes_string(color=input$ders)
-            
-        (input$size)
-            p <- p + aes_string(size=input$ders) + guides(size = guide_legend(reverse = TRUE))
-        
+    output$plot <- renderPlot(
+        {
+            p <- ggplot(df, aes_string(x = input$x, y = input$y)) +
+                geom_point()
 
-        print(p)
-        
-    }, height=700)
-    
+            (input$color)
+            p <- p + aes_string(color = input$ders)
+
+            (input$size)
+            p <- p + aes_string(size = input$ders) + guides(size = guide_legend(reverse = TRUE))
+
+
+            print(p)
+        },
+        height = 700
+    )
 }
-# Run the application 
+# Run the application
 shinyApp(ui = ui, server = server)
 ```
